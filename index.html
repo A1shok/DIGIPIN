@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Premium Checkout | GridFlow Delivery Verification</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #eef3f0;
+        --panel: rgba(255, 255, 255, .86);
+        --panel-solid: #ffffff;
+        --border: rgba(148, 163, 184, .34);
+        --ink: #0f172a;
+        --muted: #64748b;
+        --green: #116149;
+        --mint: #dff4ec;
+        --ring: rgba(17, 97, 73, .18);
+        --shadow: 0 24px 70px rgba(15, 23, 42, .12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        background:
+          radial-gradient(circle at 12% 10%, rgba(17, 97, 73, .16), transparent 28%),
+          radial-gradient(circle at 88% 0%, rgba(71, 85, 105, .14), transparent 26%),
+          linear-gradient(135deg, #f8fafc 0%, var(--bg) 100%);
+        color: var(--ink);
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        padding: 36px 18px;
+      }
+
+      .checkout-shell {
+        display: grid;
+        gap: 22px;
+        grid-template-columns: minmax(0, 1fr) minmax(330px, 390px);
+        margin: 0 auto;
+        max-width: 1180px;
+        width: 100%;
+      }
+
+      .checkout-card,
+      .summary-card {
+        backdrop-filter: blur(18px);
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .checkout-card {
+        padding: 28px;
+      }
+
+      .summary-card {
+        align-self: start;
+        padding: 22px;
+        position: sticky;
+        top: 24px;
+      }
+
+      .eyebrow {
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        margin: 0 0 8px;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: Outfit, Inter, sans-serif;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(30px, 4vw, 44px);
+        letter-spacing: -.02em;
+        line-height: 1.02;
+      }
+
+      h2 {
+        font-size: 20px;
+        letter-spacing: -.01em;
+      }
+
+      .lead {
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.6;
+        margin: 12px 0 0;
+        max-width: 640px;
+      }
+
+      .section {
+        border-top: 1px solid rgba(148, 163, 184, .24);
+        margin-top: 24px;
+        padding-top: 22px;
+      }
+
+      .section-title {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .badge {
+        background: var(--mint);
+        border: 1px solid rgba(17, 97, 73, .16);
+        border-radius: 999px;
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 800;
+        padding: 6px 10px;
+      }
+
+      .field-grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .form-group {
+        min-width: 0;
+      }
+
+      .wide {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        color: #334155;
+        display: block;
+        font-size: 13px;
+        font-weight: 800;
+        margin-bottom: 7px;
+      }
+
+      input {
+        background: rgba(255, 255, 255, .9);
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        color: var(--ink);
+        font: 600 15px/1.35 Inter, sans-serif;
+        min-height: 48px;
+        outline: 0;
+        padding: 12px 14px;
+        transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+        width: 100%;
+      }
+
+      input::placeholder {
+        color: #94a3b8;
+      }
+
+      input:focus {
+        background: #fff;
+        border-color: var(--green);
+        box-shadow: 0 0 0 5px var(--ring);
+      }
+
+      input[readonly] {
+        background: #f8fafc;
+        color: #475569;
+      }
+
+      gridflow-checkout {
+        display: block;
+        margin-top: 16px;
+        min-width: 0;
+      }
+
+      .summary-head {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .summary-head p {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+        margin: 4px 0 0;
+      }
+
+      .secure-dot {
+        background: var(--green);
+        border-radius: 999px;
+        box-shadow: 0 0 0 8px rgba(17, 97, 73, .1);
+        height: 10px;
+        width: 10px;
+      }
+
+      .item {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: 62px 1fr auto;
+        padding: 16px 0;
+      }
+
+      .item + .item {
+        border-top: 1px solid rgba(148, 163, 184, .26);
+      }
+
+      .thumb {
+        align-items: center;
+        background: linear-gradient(145deg, #172033, #334155);
+        border-radius: 14px;
+        color: #dff4ec;
+        display: flex;
+        font-family: Outfit, sans-serif;
+        font-size: 18px;
+        font-weight: 800;
+        height: 62px;
+        justify-content: center;
+      }
+
+      .item h3 {
+        font-size: 15px;
+        line-height: 1.25;
+      }
+
+      .item p {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        margin: 6px 0 0;
+      }
+
+      .price {
+        font-weight: 800;
+      }
+
+      .discount {
+        display: flex;
+        gap: 8px;
+        margin: 18px 0;
+      }
+
+      .discount button {
+        background: var(--green);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        cursor: pointer;
+        font: 800 13px/1 Inter, sans-serif;
+        padding: 0 16px;
+      }
+
+      .totals {
+        border-top: 1px solid rgba(148, 163, 184, .32);
+        padding-top: 16px;
+      }
+
+      .line {
+        color: #475569;
+        display: flex;
+        font-size: 14px;
+        font-weight: 700;
+        justify-content: space-between;
+        margin: 11px 0;
+      }
+
+      .line.total {
+        color: var(--ink);
+        font-family: Outfit, Inter, sans-serif;
+        font-size: 24px;
+        margin-top: 18px;
+      }
+
+      .trust {
+        background: rgba(223, 244, 236, .68);
+        border: 1px solid rgba(17, 97, 73, .16);
+        border-radius: 14px;
+        color: #0f513d;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.45;
+        margin-top: 18px;
+        padding: 12px;
+      }
+
+      .router-card {
+        background: rgba(15, 23, 42, .96);
+        border-radius: 16px;
+        color: #e2e8f0;
+        margin-top: 18px;
+        padding: 16px;
+      }
+
+      .router-card h2 {
+        color: #fff;
+        font-size: 18px;
+      }
+
+      .router-card p {
+        color: #94a3b8;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.45;
+        margin: 6px 0 12px;
+      }
+
+      .router-grid {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .router-card label {
+        color: #cbd5e1;
+        font-size: 12px;
+      }
+
+      .router-card input,
+      .router-card select {
+        background: #111827;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        color: #f8fafc;
+        font: 700 13px/1.2 Inter, sans-serif;
+        min-height: 40px;
+        padding: 9px 10px;
+        width: 100%;
+      }
+
+      .router-card button {
+        background: #10b981;
+        border: 0;
+        border-radius: 10px;
+        color: #052e22;
+        cursor: pointer;
+        font: 900 13px/1 Inter, sans-serif;
+        margin-top: 10px;
+        min-height: 42px;
+        width: 100%;
+      }
+
+      .router-actions {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: 1fr 1fr;
+        margin-top: 8px;
+      }
+
+      .router-actions button {
+        background: #1e293b;
+        color: #dff4ec;
+        margin-top: 0;
+      }
+
+      .router-result {
+        background: #020617;
+        border: 1px solid #1e293b;
+        border-radius: 10px;
+        color: #cbd5e1;
+        font: 700 12px/1.45 Inter, sans-serif;
+        margin-top: 12px;
+        min-height: 74px;
+        padding: 10px;
+        white-space: pre-wrap;
+      }
+
+      .router-result.block {
+        border-color: #fb7185;
+        color: #fecdd3;
+      }
+
+      .router-result.allow {
+        border-color: #34d399;
+        color: #bbf7d0;
+      }
+
+      @media (max-width: 900px) {
+        body {
+          padding: 18px 12px;
+        }
+
+        .checkout-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .summary-card {
+          position: static;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .checkout-card,
+        .summary-card {
+          border-radius: 14px;
+          padding: 18px;
+        }
+
+        .field-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .item {
+          grid-template-columns: 54px 1fr;
+        }
+
+        .item .price {
+          grid-column: 2;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="checkout-shell">
+      <section class="checkout-card">
+        <p class="eyebrow">GridFlow verified checkout</p>
+        <h1>Complete your delivery details</h1>
+        <p class="lead">Premium orders deserve precise delivery. Confirm your address once and GridFlow appends the DIGIPIN metadata needed for cleaner fulfilment.</p>
+
+        <section class="section">
+          <div class="section-title">
+            <h2>Contact</h2>
+            <span class="badge">Encrypted</span>
+          </div>
+          <div class="field-grid">
+            <div class="form-group wide">
+              <label for="customer_name">Customer Name</label>
+              <input type="text" id="customer_name" value="Rahul Sharma" autocomplete="name">
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">
+            <h2>Shipping Address</h2>
+            <span class="badge">DIGIPIN ready</span>
+          </div>
+          <div class="field-grid">
+            <div class="form-group wide">
+              <label for="address1">Address Line 1</label>
+              <input type="text" id="address1" value="3-113, Gundimeda, Tadepalli Mandal, Guntur District, Andhra Pradesh" autocomplete="shipping street-address">
+            </div>
+
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" id="city" name="shipping_address[city]" value="Guntur" autocomplete="shipping address-level2">
+            </div>
+
+            <div class="form-group">
+              <label for="state">State</label>
+              <input type="text" id="state" name="shipping_address[province]" value="Andhra Pradesh" autocomplete="shipping address-level1">
+            </div>
+
+            <div class="form-group">
+              <label for="pincode">PIN Code</label>
+              <input type="text" id="pincode" name="shipping_address[zip]" value="522303" maxlength="6" inputmode="numeric" autocomplete="shipping postal-code">
+            </div>
+
+            <div class="form-group">
+              <label for="shipping_address_address2">Address Line 2 / GridFlow Metadata</label>
+              <input type="text" id="shipping_address_address2" placeholder="DIGIPIN metadata appears here" readonly>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">
+            <h2>Pinpoint Delivery</h2>
+            <span class="badge">No paid map API</span>
+          </div>
+          <gridflow-checkout pincode-src="./pincode-packs?v=20260609-1"></gridflow-checkout>
+        </section>
+      </section>
+
+      <aside class="summary-card" aria-label="Order summary">
+        <div class="summary-head">
+          <div>
+            <h2>Order Summary</h2>
+            <p>2 premium items</p>
+          </div>
+          <span class="secure-dot" aria-hidden="true"></span>
+        </div>
+
+        <div class="item">
+          <div class="thumb">HX</div>
+          <div>
+            <h3>Halo X1 Wireless Headphones</h3>
+            <p>Graphite black / 1 year care</p>
+          </div>
+          <div class="price">₹12,999</div>
+        </div>
+
+        <div class="item">
+          <div class="thumb">LC</div>
+          <div>
+            <h3>Handcrafted Leather Travel Case</h3>
+            <p>Forest tan / monogram ready</p>
+          </div>
+          <div class="price">₹2,499</div>
+        </div>
+
+        <div class="discount">
+          <input type="text" value="GRIDFLOW10" aria-label="Discount code">
+          <button type="button">Apply</button>
+        </div>
+
+        <div class="totals">
+          <div class="line"><span>Subtotal</span><span>₹15,498</span></div>
+          <div class="line"><span>Discount</span><span>-₹1,000</span></div>
+          <div class="line"><span>Shipping</span><span>Free</span></div>
+          <div class="line total"><span>Total</span><span>₹14,498</span></div>
+        </div>
+
+        <div class="trust">
+          DIGIPIN is calculated locally and appended to checkout metadata, helping fulfilment teams reduce address clarification calls.
+        </div>
+
+        <section class="router-card">
+          <h2>Carrier Router</h2>
+          <p>Decode checkout DIGIPIN, standardize carrier handoff, and verify failed-delivery attempts.</p>
+          <div class="router-grid">
+            <div>
+              <label for="router_carrier">Carrier</label>
+              <select id="router_carrier">
+                <option value="delhivery">Delhivery</option>
+                <option value="shadowfax">Shadowfax</option>
+                <option value="xpressbees">XpressBees</option>
+                <option value="indiapost">India Post</option>
+              </select>
+            </div>
+            <div>
+              <label for="router_digipin">DIGIPIN</label>
+              <input id="router_digipin" value="47P-CT3-L839">
+            </div>
+            <div>
+              <label for="rider_lat">Rider Lat</label>
+              <input id="rider_lat" value="16.44493">
+            </div>
+            <div>
+              <label for="rider_lon">Rider Lon</label>
+              <input id="rider_lon" value="80.63339">
+            </div>
+          </div>
+          <button id="verify_ndr" type="button">Verify failed attempt</button>
+          <div class="router-actions">
+            <button id="simulate_doorstep" type="button">Simulate doorstep rider</button>
+            <button id="simulate_far" type="button">Simulate far rider</button>
+          </div>
+          <div id="router_result" class="router-result">Ready to verify rider location fence.</div>
+        </section>
+      </aside>
+    </main>
+
+    <script src="./gridflow-core.js?v=20260609-1"></script>
+    <script src="./gridflow-checkout.js?v=20260609-1"></script>
+    <script src="./gridflow-router.js?v=20260609-2"></script>
+    <script>
+      (function () {
+        var result = document.getElementById("router_result");
+        var digipinInput = document.getElementById("router_digipin");
+        var riderLat = document.getElementById("rider_lat");
+        var riderLon = document.getElementById("rider_lon");
+
+        function currentDigipin() {
+          var metadata = document.getElementById("shipping_address_address2").value || "";
+          var match = metadata.match(/DIGIPIN:\s*([23456789CFJKLMPT]{3}-[23456789CFJKLMPT]{3}-[23456789CFJKLMPT]{4})/i);
+          return match ? match[1].toUpperCase() : digipinInput.value.trim();
+        }
+
+        document.getElementById("verify_ndr").addEventListener("click", function () {
+          try {
+            var digipin = currentDigipin();
+            digipinInput.value = digipin;
+            var manifest = GridFlowRouter.createManifest({
+              orderId: "GF-10042",
+              carrier: document.getElementById("router_carrier").value,
+              customerName: document.getElementById("customer_name").value,
+              address: document.getElementById("address1").value,
+              digipin: digipin
+            });
+            var verdict = GridFlowRouter.verifyFailedAttempt({
+              digipin: digipin,
+              riderLat: riderLat.value,
+              riderLon: riderLon.value,
+              toleranceMeters: 25
+            });
+            result.className = "router-result " + (verdict.allowed ? "allow" : "block");
+            result.textContent = verdict.decision + "\n" +
+              manifest.carrier + " manifest point: " + manifest.deliveryPoint.lat + ", " + manifest.deliveryPoint.lon + "\n" +
+              "Rider distance: " + verdict.distanceMeters + "m\n" +
+              verdict.reason;
+          } catch (error) {
+            result.className = "router-result block";
+            result.textContent = error.message;
+          }
+        });
+
+        document.getElementById("simulate_doorstep").addEventListener("click", function () {
+          try {
+            var cell = GridFlowRouter.decodeCell(currentDigipin());
+            riderLat.value = cell.lat.toFixed(7);
+            riderLon.value = cell.lon.toFixed(7);
+            document.getElementById("verify_ndr").click();
+          } catch (error) {
+            result.className = "router-result block";
+            result.textContent = error.message;
+          }
+        });
+
+        document.getElementById("simulate_far").addEventListener("click", function () {
+          riderLat.value = "16.50620";
+          riderLon.value = "80.64800";
+          document.getElementById("verify_ndr").click();
+        });
+      })();
+    </script>
+  </body>
+</html>
